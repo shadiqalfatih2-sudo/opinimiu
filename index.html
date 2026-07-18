@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Opinimiu Portal</title>
+  <meta name="description" content="Portal opini publik Sulawesi Tengah berbasis data.">
+  <style>
+    :root {
+      --ocean: #0A2540;
+      --background: #F8F9FA;
+      --text: #1F2937;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      background: var(--background);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      overflow: hidden;
+    }
+
+    .app-shell {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      background: var(--background);
+    }
+
+    .loading {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--background);
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .loading.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .loading-content {
+      text-align: center;
+      padding: 24px;
+    }
+
+    .brand {
+      margin: 0 0 8px;
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--ocean);
+    }
+
+    .loading-text {
+      margin: 0;
+      font-size: 14px;
+      color: #6B7280;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+      background: white;
+    }
+
+    .fallback {
+      display: none;
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      padding: 24px;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background: var(--background);
+    }
+
+    .fallback.show {
+      display: flex;
+    }
+
+    .fallback-card {
+      max-width: 520px;
+      padding: 32px;
+      background: white;
+      border: 1px solid #E5E7EB;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(10, 37, 64, 0.08);
+    }
+
+    .fallback-card h1 {
+      margin: 0 0 12px;
+      color: var(--ocean);
+      font-size: 24px;
+    }
+
+    .fallback-card p {
+      margin: 0 0 20px;
+      color: #6B7280;
+      line-height: 1.6;
+    }
+
+    .fallback-card a {
+      display: inline-block;
+      padding: 12px 20px;
+      border-radius: 8px;
+      background: var(--ocean);
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+    <div id="loading" class="loading" aria-live="polite">
+      <div class="loading-content">
+        <p class="brand">OPINIMIU</p>
+        <p class="loading-text">Memuat portal...</p>
+      </div>
+    </div>
+
+    <iframe
+      id="portal-frame"
+      src="https://script.google.com/macros/s/AKfycby5IbgXQgfAoZWivYSK9N-29WvSAJy7-R8uYYQVPdb2Nlbszdq38u5xA_Ma_lJdUuls/exec"
+      title="Opinimiu Portal"
+      allow="clipboard-read; clipboard-write"
+      referrerpolicy="strict-origin-when-cross-origin"
+      loading="eager">
+    </iframe>
+
+    <div id="fallback" class="fallback">
+      <div class="fallback-card">
+        <h1>Portal tidak dapat dimuat</h1>
+        <p>Silakan buka Opinimiu Portal langsung melalui tombol berikut.</p>
+        <a href="https://script.google.com/macros/s/AKfycby5IbgXQgfAoZWivYSK9N-29WvSAJy7-R8uYYQVPdb2Nlbszdq38u5xA_Ma_lJdUuls/exec" target="_blank" rel="noopener noreferrer">Buka Opinimiu Portal</a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const frame = document.getElementById('portal-frame');
+    const loading = document.getElementById('loading');
+    const fallback = document.getElementById('fallback');
+
+    let loaded = false;
+
+    frame.addEventListener('load', function () {
+      loaded = true;
+      loading.classList.add('hidden');
+    });
+
+    setTimeout(function () {
+      if (!loaded) {
+        loading.classList.add('hidden');
+        fallback.classList.add('show');
+      }
+    }, 15000);
+  </script>
+</body>
+</html>
