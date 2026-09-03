@@ -25,6 +25,7 @@ type Article = {
   status: "draft" | "review" | "scheduled" | "published" | "archived";
   is_featured: boolean;
   reading_time: number;
+  scheduled_at: string | null;
   published_at: string | null;
   updated_at: string;
   category_id: string | null;
@@ -56,7 +57,8 @@ const emptyForm = {
   labelId: "",
   seoTitle: "",
   seoDescription: "",
-  sourcesText: ""
+  sourcesText: "",
+  scheduledAt: ""
 };
 
 function slugify(value: string) {
@@ -79,6 +81,19 @@ function parseSources(text: string, articleId: string) {
   }).filter((row) => row.source_title);
 }
 
+function toLocalInput(value: string | null) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  const local = new Date(date.getTime() - date.getTimezoneOffset() * 60_000);
+  return local.toISOString().slice(0, 16);
+}
+
+function formatDate(value: string | null) {
+  if (!value) return "—";
+  return new Intl.DateTimeFormat("id-ID", { dateStyle: "medium", timeStyle: "short" }).format(new Date(value));
+}
+
 export default function AdminCMS({ user, role, initialArticles, categories, labels, initialSources }: Props) {
   const [articles, setArticles] = useState(initialArticles);
   const [sources, setSources] = useState(initialSources);
@@ -92,6 +107,7 @@ export default function AdminCMS({ user, role, initialArticles, categories, labe
   const counts = useMemo(() => ({
     draft: articles.filter((a) => a.status === "draft").length,
     review: articles.filter((a) => a.status === "review").length,
+    scheduled: articles.filter((a) => a.status === "scheduled").length,
     published: articles.filter((a) => a.status === "published").length
   }), [articles]);
 
@@ -116,7 +132,8 @@ export default function AdminCMS({ user, role, initialArticles, categories, labe
       labelId: article.editorial_label_id ?? "",
       seoTitle: article.seo_title ?? "",
       seoDescription: article.seo_description ?? "",
-      sourcesText: sources.filter((source) => source.article_id === article.id).map(sourceToLine).join("\n")
+      sourcesText: sources.filter((source) => source.article_id === article.id).map(sourceToLine).join("\n"),
+      scheduledAt: toLocalInput(article.scheduled_at)
     });
     setNotice("");
     setMode("editor");
@@ -148,11 +165,16 @@ export default function AdminCMS({ user, role, initialArticles, categories, labe
     const supabase = createClient();
     if (!supabase) return;
     if (!form.title.trim()) return setNotice("Judul wajib diisi.");
-    if (!canPublish && (form.status === "published" || form.status === "archived")) return setNotice("Role contributor tidak dapat menerbitkan atau mengarsipkan tulisan.");
+    if (!canPublish && ["scheduled", "published", "archived"].includes(form.status)) return setNotice("Role contributor tidak dapat menjadwalkan, menerbitkan, atau mengarsipkan tulisan.");
+    if (form.status === "scheduled" && !form.scheduledAt) return setNotice("Tanggal dan jam terbit wajib diisi untuk status Scheduled.");
+
+    const scheduleIso = form.status === "scheduled" ? new Date(form.scheduledAt).toISOString() : null;
+    if (form.status === "scheduled" && Number.isNaN(new Date(scheduleIso ?? "").getTime())) return setNotice("Jadwal terbit tidak valid.");
 
     setBusy(true);
     setNotice("");
     const now = new Date().toISOString();
+    const existing = form.id ? articles.find((article) => article.id === form.id) : undefined;
     const payload = {
       author_id: user.id,
       title: form.title.trim(),
@@ -167,7 +189,8 @@ export default function AdminCMS({ user, role, initialArticles, categories, labe
       editorial_label_id: form.labelId || null,
       seo_title: form.seoTitle.trim() || null,
       seo_description: form.seoDescription.trim() || null,
-      published_at: form.status === "published" ? (form.id ? articles.find((a) => a.id === form.id)?.published_at ?? now : now) : null,
+      scheduled_at: scheduleIso,
+      published_at: form.status === "published" ? existing?.published_at ?? now : null,
       updated_at: now
     };
 
@@ -199,9 +222,9 @@ export default function AdminCMS({ user, role, initialArticles, categories, labe
     }
 
     setBusy(false);
-    setArticles((current) => form.id ? current.map((a) => a.id === saved.id ? saved : a) : [saved, ...current]);
-    setNotice("Tulisan dan sumber berhasil disimpan.");
-    setForm((current) => ({ ...current, id: saved.id }));
+    setArticles((current) => form.id ? current.map((article) => article.id === saved.id ? saved : article) : [saved, ...current]);
+    setNotice(form.status === "scheduled" ? "Tulisan berhasil dijadwalkan. Sistem akan menerbitkannya otomatis." : "Tulisan dan sumber berhasil disimpan.");
+    setForm((current) => ({ ...current, id: saved.id, scheduledAt: toLocalInput(saved.scheduled_at) }));
   }
 
   async function removeArticle(article: Article) {
@@ -212,7 +235,7 @@ export default function AdminCMS({ user, role, initialArticles, categories, labe
     const { error } = await supabase.from("articles").delete().eq("id", article.id);
     setBusy(false);
     if (error) return setNotice(error.message);
-    setArticles((current) => current.filter((a) => a.id !== article.id));
+    setArticles((current) => current.filter((item) => item.id !== article.id));
     setSources((current) => current.filter((source) => source.article_id !== article.id));
   }
 
@@ -229,6 +252,7 @@ export default function AdminCMS({ user, role, initialArticles, categories, labe
       <nav>
         <button className={mode === "list" ? "active" : ""} onClick={() => setMode("list")}>◫ Dashboard</button>
         <button className={mode === "editor" ? "active" : ""} onClick={newArticle}>＋ Tulis baru</button>
+        {canPublish && <a href="/admin/calendar">◷ Kalender</a>}
         {canPublish && <a href="/admin/program">⌁ Program</a>}
         {canPublish && <a href="/admin/data">◉ Data</a>}
         <a href="/" target="_blank">↗ Lihat situs</a>
@@ -239,19 +263,20 @@ export default function AdminCMS({ user, role, initialArticles, categories, labe
     <main className="cms-main">
       {mode === "list" ? <>
         <header className="cms-heading">
-          <div><span>Ruang Redaksi</span><h1>Selamat datang.</h1><p>Kelola opini, analisis, dan perspektif Sulawesi Tengah dari satu tempat.</p></div>
+          <div><span>Ruang Redaksi</span><h1>Selamat datang.</h1><p>Kelola opini, analisis, jadwal terbit, dan perspektif Sulawesi Tengah dari satu tempat.</p></div>
           <button className="cms-primary" onClick={newArticle}>＋ Tulis Artikel</button>
         </header>
-        <section className="cms-stats">
+        <section className="cms-stats stage2-stats">
           <article><span>Draft</span><strong>{counts.draft}</strong><small>Sedang disusun</small></article>
           <article><span>Review</span><strong>{counts.review}</strong><small>Menunggu ulasan</small></article>
+          <article><span>Scheduled</span><strong>{counts.scheduled}</strong><small>Antrean terbit</small></article>
           <article><span>Terbit</span><strong>{counts.published}</strong><small>Tayang ke publik</small></article>
           <article><span>Total</span><strong>{articles.length}</strong><small>Semua tulisan</small></article>
         </section>
         <section className="cms-card">
           <div className="cms-card-head"><div><span>Tulisan</span><h2>Daftar artikel</h2></div><small>{articles.length} tulisan</small></div>
           {articles.length === 0 ? <div className="cms-empty"><strong>Belum ada tulisan.</strong><p>Buat artikel pertama Opinimiu dan simpan sebagai draft atau langsung terbitkan.</p><button className="cms-primary" onClick={newArticle}>Buat artikel pertama</button></div> :
-          <div className="cms-table-wrap"><table className="cms-table"><thead><tr><th>Judul</th><th>Status</th><th>Sumber</th><th>Diperbarui</th><th></th></tr></thead><tbody>{articles.map((article) => <tr key={article.id}><td><strong>{article.title}</strong><small>/{article.slug}</small></td><td><span className={`status-pill status-${article.status}`}>{article.status}</span></td><td>{sources.filter((source) => source.article_id === article.id).length}</td><td>{new Intl.DateTimeFormat("id-ID", { dateStyle: "medium" }).format(new Date(article.updated_at))}</td><td><div className="row-actions"><button onClick={() => editArticle(article)}>Edit</button><button className="danger" disabled={busy} onClick={() => removeArticle(article)}>Hapus</button></div></td></tr>)}</tbody></table></div>}
+          <div className="cms-table-wrap"><table className="cms-table"><thead><tr><th>Judul</th><th>Status</th><th>Jadwal / terbit</th><th>Sumber</th><th>Diperbarui</th><th></th></tr></thead><tbody>{articles.map((article) => <tr key={article.id}><td><strong>{article.title}</strong><small>/{article.slug}</small></td><td><span className={`status-pill status-${article.status}`}>{article.status}</span></td><td>{formatDate(article.status === "scheduled" ? article.scheduled_at : article.published_at)}</td><td>{sources.filter((source) => source.article_id === article.id).length}</td><td>{formatDate(article.updated_at)}</td><td><div className="row-actions"><button onClick={() => editArticle(article)}>Edit</button><button className="danger" disabled={busy} onClick={() => removeArticle(article)}>Hapus</button></div></td></tr>)}</tbody></table></div>}
         </section>
       </> : <section className="editor-view">
         <header className="cms-heading editor-heading">
@@ -278,8 +303,8 @@ export default function AdminCMS({ user, role, initialArticles, categories, labe
             </div>
           </div>
           <aside className="editor-settings">
-            <div className="cms-card"><h3>Publikasi</h3><label>Status<select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as Article["status"] })}><option value="draft">Draft</option><option value="review">Review</option>{canPublish && <option value="published">Published</option>}{canPublish && <option value="archived">Archived</option>}</select></label><label className="check-row"><input type="checkbox" checked={form.isFeatured} onChange={(e) => setForm({ ...form, isFeatured: e.target.checked })} /> Jadikan sorotan utama</label></div>
-            <div className="cms-card"><h3>Klasifikasi</h3><label>Kategori<select value={form.categoryId} onChange={(e) => setForm({ ...form, categoryId: e.target.value })}><option value="">Pilih kategori</option>{categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}</select></label><label>Label editorial<select value={form.labelId} onChange={(e) => setForm({ ...form, labelId: e.target.value })}><option value="">Pilih label</option>{labels.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}</select></label></div>
+            <div className="cms-card"><h3>Publikasi</h3><label>Status<select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as Article["status"] })}><option value="draft">Draft</option><option value="review">Review</option>{canPublish && <option value="scheduled">Scheduled</option>}{canPublish && <option value="published">Published</option>}{canPublish && <option value="archived">Archived</option>}</select></label>{form.status === "scheduled" && <label>Tanggal & jam terbit<input type="datetime-local" value={form.scheduledAt} onChange={(e) => setForm({ ...form, scheduledAt: e.target.value })} required /></label>}<label className="check-row"><input type="checkbox" checked={form.isFeatured} onChange={(e) => setForm({ ...form, isFeatured: e.target.checked })} /> Jadikan sorotan utama</label>{form.status === "scheduled" && <small className="field-help">Artikel akan diterbitkan otomatis oleh scheduler database setiap menit.</small>}</div>
+            <div className="cms-card"><h3>Klasifikasi</h3><label>Kategori<select value={form.categoryId} onChange={(e) => setForm({ ...form, categoryId: e.target.value })}><option value="">Pilih kategori</option>{categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label><label>Label editorial<select value={form.labelId} onChange={(e) => setForm({ ...form, labelId: e.target.value })}><option value="">Pilih label</option>{labels.map((label) => <option key={label.id} value={label.id}>{label.name}</option>)}</select></label></div>
             <div className="cms-card"><h3>Cover</h3>{form.coverUrl && <img className="cover-preview" src={form.coverUrl} alt="Preview cover" />}<label className="upload-label">Unggah gambar<input type="file" accept="image/*" onChange={(e) => uploadCover(e.target.files?.[0] ?? null)} /></label><small className="field-help">JPG/PNG/WebP, maksimal 5 MB.</small><label>Atau URL cover<input type="url" value={form.coverUrl} onChange={(e) => setForm({ ...form, coverUrl: e.target.value })} placeholder="https://..." /></label></div>
             <div className="cms-card"><h3>Detail</h3><label>Slug<input value={form.slug} onChange={(e) => setForm({ ...form, slug: slugify(e.target.value) })} /></label><label>Estimasi baca (menit)<input type="number" min="1" value={form.readingTime} onChange={(e) => setForm({ ...form, readingTime: Number(e.target.value) })} /></label></div>
             {notice && <div className="cms-notice">{notice}</div>}
