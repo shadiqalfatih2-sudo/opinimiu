@@ -3,10 +3,11 @@
 import { usePathname } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import MotionController from "@/components/MotionController";
 
 export default function SiteChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isAdmin = pathname.startsWith("/admin");
   if (isAdmin) return <main>{children}</main>;
-  return <><Header /><main>{children}</main><Footer /></>;
+  return <><MotionController /><Header /><main key={pathname} className="route-stage">{children}</main><Footer /></>;
 }
