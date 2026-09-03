@@ -4,6 +4,7 @@ import "./article.css";
 import "./admin/admin.css";
 import "./admin/enhancements.css";
 import "./stage2.css";
+import "./motion-refresh.css";
 import SiteChrome from "@/components/SiteChrome";
 
 export const metadata: Metadata = {
