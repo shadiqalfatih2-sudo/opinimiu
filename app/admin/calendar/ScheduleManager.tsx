@@ -108,7 +108,7 @@ export default function ScheduleManager({ initialArticles, role }: Props) {
 
     <section className="cms-card manager-section">
       <div className="cms-card-head"><div><span>Antrean</span><h2>Akan terbit</h2></div><small>{upcoming.length} artikel</small></div>
-      {upcoming.length === 0 ? <div className="cms-empty"><strong>Belum ada artikel terjadwal.</strong><p>Pilih artikel di atas untuk membuat antrean publikasi.</p></div> : <div className="schedule-list">{upcoming.map((article) => <article key={article.id}><div><span>{formatDate(article.scheduled_at)}</span><h3>{article.title}</h3><small>/{article.slug}</small></div><div className="row-actions"><a href={`/opini/${article.slug}`} target="_blank">Preview ↗</a><button className="danger" disabled={busy} onClick={() => cancelSchedule(article)}>Batalkan</button></div></article>)}</div>}
+      {upcoming.length === 0 ? <div className="cms-empty"><strong>Belum ada artikel terjadwal.</strong><p>Pilih artikel di atas untuk membuat antrean publikasi.</p></div> : <div className="schedule-list">{upcoming.map((article) => <article key={article.id}><div><span>{formatDate(article.scheduled_at)}</span><h3>{article.title}</h3><small>/{article.slug}</small></div><div className="row-actions"><a href="/admin">Edit di dashboard</a><button className="danger" disabled={busy} onClick={() => cancelSchedule(article)}>Batalkan</button></div></article>)}</div>}
     </section>
 
     <section className="cms-card manager-section">
