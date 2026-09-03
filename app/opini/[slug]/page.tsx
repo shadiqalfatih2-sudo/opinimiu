@@ -4,18 +4,23 @@ import { notFound } from "next/navigation";
 import { getPublishedArticle } from "@/lib/articles";
 
 type Params = { params: Promise<{ slug: string }> };
+const baseUrl = "https://opinimiu.vercel.app";
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
   const article = await getPublishedArticle(slug);
   if (!article) return { title: "Artikel tidak ditemukan" };
+  const canonical = `${baseUrl}/opini/${slug}`;
   return {
     title: article.seoTitle || article.title,
     description: article.seoDescription || article.excerpt,
+    alternates: { canonical },
     openGraph: {
       title: article.seoTitle || article.title,
       description: article.seoDescription || article.excerpt,
       type: "article",
+      url: canonical,
+      publishedTime: article.publishedAtIso ?? undefined,
       images: article.coverUrl ? [{ url: article.coverUrl }] : undefined
     },
     twitter: {
@@ -31,6 +36,8 @@ export default async function ArticlePage({ params }: Params) {
   const { slug } = await params;
   const article = await getPublishedArticle(slug);
   if (!article) notFound();
+  const articleUrl = `${baseUrl}/opini/${slug}`;
+  const whatsappText = encodeURIComponent(`${article.title} — ${articleUrl}`);
 
   return (
     <article className="article-page shell page-top">
@@ -42,7 +49,7 @@ export default async function ArticlePage({ params }: Params) {
       </div>
       {article.coverUrl && <figure className="article-cover"><img src={article.coverUrl} alt={`Cover ${article.title}`} /></figure>}
       <div className="article-layout">
-        <aside><span>Bagikan</span><a href={`https://wa.me/?text=${encodeURIComponent(article.title)}`} target="_blank" rel="noreferrer">WhatsApp ↗</a><Link href="/opini">← Semua opini</Link></aside>
+        <aside><span>Bagikan</span><a href={`https://wa.me/?text=${whatsappText}`} target="_blank" rel="noreferrer">WhatsApp ↗</a><Link href="/opini">← Semua opini</Link></aside>
         <div className="article-body">
           <div className="summary-box"><span className="eyebrow">Inti singkat</span><p>{article.excerpt || "Tulisan ini membaca isu dari konteks, manfaat, risiko, dan pertanyaan yang masih perlu dijawab dengan data."}</p></div>
           {article.body.map((paragraph: string, index: number) => <p key={index}>{paragraph}</p>)}
