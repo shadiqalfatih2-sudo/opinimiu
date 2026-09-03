@@ -3,11 +3,13 @@ import { cookies } from "next/headers";
 
 type CookieToSet = { name: string; value: string; options: CookieOptions };
 
+const fallbackUrl = "https://vwszqyhnwowxqiukbxcr.supabase.co";
+const fallbackKey = "sb_publishable_ekaBwdd7PFPGTIDlANd3qg_N_zyx5ar";
+
 export async function createClient() {
   const cookieStore = await cookies();
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-  if (!url || !key) return null;
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? fallbackUrl;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? fallbackKey;
 
   return createServerClient(url, key, {
     cookies: {
