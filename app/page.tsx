@@ -7,28 +7,50 @@ import { getPublishedArticles } from "@/lib/articles";
 export default async function Home() {
   const articles = await getPublishedArticles();
   const featured = articles.find((a) => a.featured) ?? articles[0];
+  const heroArticles = articles.slice(0, 3);
 
   return <>
-    <section className="home-hero">
+    <section className="home-hero home-hero-editorial">
       <div className="hero-media" aria-hidden="true">
-        <img src="https://beraniapp.com/images/palu-bay.png" alt="" />
+        <img src="/opinimiu-hero.webp" alt="" />
         <div className="hero-media-wash" />
         <div className="hero-media-grain" />
       </div>
+
       <div className="shell home-hero-content">
-        <div className="hero-kicker hero-enter hero-enter-1"><span>Sulawesi Tengah</span><span className="dot" /><span>Opini · Data · Perspektif</span></div>
         <div className="hero-copy-wrap">
+          <div className="hero-kicker hero-enter hero-enter-1">
+            <span>Kanal opini & analisis</span><span className="dot" /><span>Sulawesi Tengah</span>
+          </div>
           <h1 className="hero-enter hero-enter-2">Sulteng perlu dibicarakan <em>dengan data.</em></h1>
-          <div className="hero-intro hero-enter hero-enter-3">
-            <p>Ruang editorial untuk membaca program, isu, dan pembangunan Sulawesi Tengah dari lebih dari satu sisi—dekat, kritis, dan bisa diuji.</p>
-            <Link href="/isu" className="hero-action">Jelajahi isu <span>↘</span></Link>
+          <p className="hero-lead hero-enter hero-enter-3">Mengangkat isu penting, membaca program, dan melihat pembangunan Sulawesi Tengah dari lebih dari satu sisi—dekat, kritis, dan bisa diuji.</p>
+          <div className="hero-actions hero-enter hero-enter-3">
+            <Link href="/isu" className="hero-primary">Jelajahi isu <span>→</span></Link>
+            <Link href="/tentang" className="hero-secondary">Tentang Opinimiu <span>→</span></Link>
           </div>
         </div>
-        <div className="hero-foot hero-enter hero-enter-4">
-          <span>Opinimiu · 2026</span>
-          <span className="hero-scroll"><i /> Scroll untuk membaca</span>
+
+        <div className="hero-preview-tray hero-enter hero-enter-4">
+          <div className="hero-preview-head">
+            <span>Terbaru dari Opinimiu</span>
+            <Link href="/opini">Lihat semua tulisan →</Link>
+          </div>
+          <div className="hero-preview-grid">
+            {heroArticles.map((article, index) => <article className={`hero-preview-card hero-preview-${index + 1}`} key={article.slug}>
+              <div className="hero-preview-meta"><span>{article.category}</span><small>{article.readingTime}</small></div>
+              <h2><Link href={`/opini/${article.slug}`}>{article.title}</Link></h2>
+              <p>{article.excerpt}</p>
+              <Link href={`/opini/${article.slug}`} className="hero-preview-link">Lihat selengkapnya <span>↗</span></Link>
+            </article>)}
+          </div>
         </div>
       </div>
+    </section>
+
+    <section className="home-principles shell">
+      <article><span className="principle-icon principle-cyan">01</span><div><strong>Berbasis data</strong><p>Analisis dimulai dari konteks, data, dan sumber yang bisa diuji.</p></div></article>
+      <article><span className="principle-icon principle-magenta">02</span><div><strong>Beragam perspektif</strong><p>Lebih dari satu sisi untuk isu publik yang memang tidak sederhana.</p></div></article>
+      <article><span className="principle-icon principle-yellow">03</span><div><strong>Konstruktif untuk Sulteng</strong><p>Kritis tanpa kehilangan orientasi pada perbaikan dan nilai publik.</p></div></article>
     </section>
 
     <section className="featured shell section-pad">
