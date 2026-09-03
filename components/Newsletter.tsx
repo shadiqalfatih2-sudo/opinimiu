@@ -1,0 +1,1 @@
+export default function Newsletter() { return <section className="newsletter shell"><div><span className="eyebrow light">Newsletter</span><h2>Yang penting dari Sulteng, tanpa kebisingan.</h2></div><form action="#" className="newsletter-form"><input type="email" placeholder="email@kamu.id" aria-label="Email" /><button type="submit">Ikuti Opinimiu →</button></form></section>; }

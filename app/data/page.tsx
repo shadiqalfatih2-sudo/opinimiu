@@ -1,0 +1,3 @@
+import { dataPoints } from "@/lib/content";
+export const metadata = { title: "Data" };
+export default function DataPage(){return <section className="shell page-top"><div className="page-hero"><span className="eyebrow">Data</span><h1>Data untuk memberi konteks, bukan menutup debat.</h1><p>Kumpulan angka kunci, sumber, dan catatan metodologis yang dipakai dalam tulisan Opinimiu.</p></div><div className="data-grid large">{dataPoints.concat([{value:"Terbuka",label:"Sumber data",note:"Setiap data penting akan diarahkan ke sumber resmi atau sumber yang dapat diverifikasi."}]).map(d=><div className="data-card" key={d.label}><strong>{d.value}</strong><span>{d.label}</span><p>{d.note}</p></div>)}</div></section>}
