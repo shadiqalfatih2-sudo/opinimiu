@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import "./admin/admin.css";
+import "./admin/enhancements.css";
 import SiteChrome from "@/components/SiteChrome";
 
 export const metadata: Metadata = {
