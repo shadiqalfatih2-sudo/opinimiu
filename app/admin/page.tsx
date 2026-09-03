@@ -15,7 +15,7 @@ export default async function AdminPage() {
 
   const [roleResult, articlesResult, categoriesResult, labelsResult, sourcesResult] = await Promise.all([
     supabase.from("user_roles").select("role").eq("user_id", user.id).maybeSingle(),
-    supabase.from("articles").select("id,title,slug,excerpt,body,cover_url,status,is_featured,reading_time,published_at,updated_at,category_id,editorial_label_id,seo_title,seo_description").order("updated_at", { ascending: false }),
+    supabase.from("articles").select("id,title,slug,excerpt,body,cover_url,status,is_featured,reading_time,scheduled_at,published_at,updated_at,category_id,editorial_label_id,seo_title,seo_description").order("updated_at", { ascending: false }),
     supabase.from("categories").select("id,name").order("name"),
     supabase.from("editorial_labels").select("id,name").order("name"),
     supabase.from("article_sources").select("id,article_id,source_title,publisher,source_url,source_date,note,sort_order").order("sort_order", { ascending: true })

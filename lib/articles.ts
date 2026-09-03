@@ -11,6 +11,7 @@ function mapArticle(item: any) {
     readingTime: `${item.reading_time ?? 5} menit`,
     author: item.author?.display_name ?? "Tim Opinimiu",
     publishedAt: item.published_at ? new Intl.DateTimeFormat("id-ID", { dateStyle: "long" }).format(new Date(item.published_at)) : "",
+    publishedAtIso: item.published_at ?? null,
     featured: Boolean(item.is_featured),
     body: Array.isArray(item.body) ? item.body : typeof item.body === "string" ? [item.body] : [],
     coverUrl: item.cover_url ?? null,
@@ -21,7 +22,7 @@ function mapArticle(item: any) {
 }
 
 function mapFallback(article: any) {
-  return { ...article, coverUrl: null, seoTitle: article.title, seoDescription: article.excerpt ?? "", sources: [] };
+  return { ...article, publishedAtIso: null, coverUrl: null, seoTitle: article.title, seoDescription: article.excerpt ?? "", sources: [] };
 }
 
 const articleSelect = "slug,title,excerpt,reading_time,published_at,is_featured,body,cover_url,seo_title,seo_description, author:profiles!articles_author_id_fkey(display_name), category:categories(name), editorial_label:editorial_labels(name), article_sources(source_title,publisher,source_url,source_date,note,sort_order)";
