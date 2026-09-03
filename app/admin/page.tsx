@@ -1,4 +1,35 @@
-import Link from "next/link";
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-export const metadata = { title: "Editorial Dashboard" };
-export default async function AdminPage(){const supabase=await createClient(); const user=supabase?(await supabase.auth.getUser()).data.user:null; return <section className="shell page-top"><div className="admin-top"><div><span className="eyebrow">Editorial dashboard</span><h1>Selamat datang di ruang redaksi.</h1><p>{user?`Masuk sebagai ${user.email}`:"Mode preview — Supabase belum terhubung atau sesi belum aktif."}</p></div><Link href="/admin/login" className="button-dark">Login / ganti akun</Link></div><div className="admin-grid"><article><span>Draft</span><strong>0</strong><p>Tulisan yang sedang disusun.</p></article><article><span>Review</span><strong>0</strong><p>Menunggu editor.</p></article><article><span>Terbit</span><strong>4</strong><p>Konten demo saat ini.</p></article></div><div className="admin-panel"><h2>CMS Opinimiu</h2><p>Fondasi role Contributor → Editor → Admin, workflow draft/review/publish, kategori, label editorial, program hub, dan data point sudah disiapkan di migration Supabase.</p></div></section>}
+import AdminCMS from "./AdminCMS";
+
+export const metadata = { title: "Editorial Dashboard — Opinimiu" };
+export const dynamic = "force-dynamic";
+
+export default async function AdminPage() {
+  const supabase = await createClient();
+  if (!supabase) redirect("/admin/login");
+
+  const { data: userData } = await supabase.auth.getUser();
+  const user = userData.user;
+  if (!user) redirect("/admin/login");
+
+  await supabase.rpc("claim_first_admin");
+
+  const [roleResult, articlesResult, categoriesResult, labelsResult] = await Promise.all([
+    supabase.from("user_roles").select("role").eq("user_id", user.id).maybeSingle(),
+    supabase.from("articles").select("id,title,slug,excerpt,body,cover_url,status,is_featured,reading_time,published_at,updated_at,category_id,editorial_label_id").order("updated_at", { ascending: false }),
+    supabase.from("categories").select("id,name").order("name"),
+    supabase.from("editorial_labels").select("id,name").order("name")
+  ]);
+
+  const role = roleResult.data?.role ?? "contributor";
+  if (!['admin', 'editor', 'contributor'].includes(role)) redirect("/admin/login");
+
+  return <AdminCMS
+    user={{ id: user.id, email: user.email ?? "editor@opinimiu.id" }}
+    role={role}
+    initialArticles={(articlesResult.data ?? []) as never[]}
+    categories={categoriesResult.data ?? []}
+    labels={labelsResult.data ?? []}
+  />;
+}
