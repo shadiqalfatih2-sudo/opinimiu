@@ -1,4 +1,32 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getPublishedArticles } from "@/lib/articles";
-export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) { const { slug } = await params; const articles = await getPublishedArticles(); const article = articles.find((a) => a.slug === slug); if (!article) notFound(); return <article className="article-page shell page-top"><div className="article-hero"><div className="meta"><span>{article.category}</span><span>•</span><span>{article.label}</span><span>•</span><span>{article.readingTime}</span></div><h1>{article.title}</h1><p className="dek">{article.excerpt}</p><div className="article-byline"><span className="avatar">O</span><div><strong>{article.author}</strong><small>{article.publishedAt}</small></div></div></div><div className="article-layout"><aside><span>Bagikan</span><a href="#">Instagram ↗</a><a href="#">WhatsApp ↗</a><Link href="/opini">← Semua opini</Link></aside><div className="article-body"><div className="summary-box"><span className="eyebrow">Inti singkat</span><p>Tulisan ini membaca isu dari konteks, manfaat, risiko, dan pertanyaan yang masih perlu dijawab dengan data.</p></div>{article.body.map((p, i) => <p key={i}>{p}</p>)}<blockquote>“Kritik yang baik bukan yang paling keras, tetapi yang paling jelas menunjukkan apa yang perlu diperbaiki.”</blockquote><p>Opinimiu akan terus memperbarui pembacaan ketika data, kebijakan, atau kondisi lapangan berubah.</p></div></div></article>; }
+
+export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const articles = await getPublishedArticles();
+  const article = articles.find((a: { slug: string }) => a.slug === slug);
+  if (!article) notFound();
+
+  return (
+    <article className="article-page shell page-top">
+      <div className="article-hero">
+        <div className="meta">
+          <span>{article.category}</span><span>•</span><span>{article.label}</span><span>•</span><span>{article.readingTime}</span>
+        </div>
+        <h1>{article.title}</h1>
+        <p className="dek">{article.excerpt}</p>
+        <div className="article-byline"><span className="avatar">O</span><div><strong>{article.author}</strong><small>{article.publishedAt}</small></div></div>
+      </div>
+      <div className="article-layout">
+        <aside><span>Bagikan</span><a href="#">Instagram ↗</a><a href="#">WhatsApp ↗</a><Link href="/opini">← Semua opini</Link></aside>
+        <div className="article-body">
+          <div className="summary-box"><span className="eyebrow">Inti singkat</span><p>Tulisan ini membaca isu dari konteks, manfaat, risiko, dan pertanyaan yang masih perlu dijawab dengan data.</p></div>
+          {article.body.map((paragraph: string, index: number) => <p key={index}>{paragraph}</p>)}
+          <blockquote>“Kritik yang baik bukan yang paling keras, tetapi yang paling jelas menunjukkan apa yang perlu diperbaiki.”</blockquote>
+          <p>Opinimiu akan terus memperbarui pembacaan ketika data, kebijakan, atau kondisi lapangan berubah.</p>
+        </div>
+      </div>
+    </article>
+  );
+}
