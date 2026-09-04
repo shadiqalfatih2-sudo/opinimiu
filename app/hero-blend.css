@@ -1,0 +1,36 @@
+/* Precision full-bleed hero blend for Opinimiu */
+.ou-home-hero{position:relative!important;display:block!important;min-height:640px!important;overflow:hidden!important;background:#090b09!important;isolation:isolate}
+.ou-home-hero .ou-hero-image{position:absolute!important;inset:0!important;z-index:0!important;min-height:0!important;overflow:hidden!important}
+.ou-home-hero .ou-hero-image img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:68% 48%!important;display:block!important;transform:scale(1.015)!important;transition:transform 1.15s cubic-bezier(.2,.8,.2,1)!important}
+.ou-home-hero:hover .ou-hero-image img{transform:scale(1.035)!important}
+.ou-home-hero .ou-hero-image:before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,rgba(7,9,7,.99) 0%,rgba(7,9,7,.98) 24%,rgba(7,9,7,.95) 36%,rgba(7,9,7,.84) 45%,rgba(7,9,7,.60) 54%,rgba(7,9,7,.28) 64%,rgba(7,9,7,.08) 73%,rgba(7,9,7,0) 82%)}
+.ou-home-hero .ou-hero-image:after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(0deg,rgba(7,9,7,.38) 0%,rgba(7,9,7,.12) 20%,rgba(7,9,7,0) 46%),linear-gradient(180deg,rgba(7,9,7,.08),transparent 26%)}
+.ou-home-hero .ou-hero-copy{position:relative!important;z-index:2!important;min-height:640px!important;background:transparent!important;color:#fff!important;display:flex!important;align-items:center!important;pointer-events:none}
+.ou-home-hero .ou-hero-copy-inner{position:relative;width:min(610px,calc(100% - 48px))!important;margin-left:max(24px,calc((100vw - 1280px)/2 + 24px))!important;padding:70px 0 72px!important;pointer-events:auto}
+.ou-home-hero .ou-hero-copy-inner:before{content:"";display:block;width:94px;height:7px;margin-bottom:24px;background:linear-gradient(90deg,#08a6df 0 33.333%,#ffd400 33.333% 66.666%,#ec008c 66.666% 100%)}
+.ou-home-hero .ou-kicker{color:#d7dad4!important}
+.ou-home-hero h1{max-width:590px!important;font-size:clamp(46px,5vw,72px)!important;line-height:.98!important;margin:20px 0 22px!important;text-shadow:0 2px 24px rgba(0,0,0,.14)}
+.ou-home-hero p{max-width:530px!important;color:#e1e4df!important;font-size:17px!important;line-height:1.58!important}
+.ou-home-hero .ou-hero-image-label{left:auto!important;right:max(24px,calc((100vw - 1280px)/2 + 24px))!important;bottom:26px!important;z-index:3!important;background:rgba(255,255,255,.94)!important;backdrop-filter:blur(10px);box-shadow:0 14px 38px rgba(0,0,0,.18)!important}
+
+@media(max-width:1000px){
+  .ou-home-hero{min-height:590px!important}
+  .ou-home-hero .ou-hero-copy{min-height:590px!important}
+  .ou-home-hero .ou-hero-copy-inner{width:min(680px,calc(100% - 40px))!important;margin-left:20px!important;padding:60px 0!important}
+  .ou-home-hero .ou-hero-image img{object-position:70% 50%!important}
+  .ou-home-hero .ou-hero-image:before{background:linear-gradient(90deg,rgba(7,9,7,.99) 0%,rgba(7,9,7,.96) 34%,rgba(7,9,7,.84) 48%,rgba(7,9,7,.52) 62%,rgba(7,9,7,.16) 78%,rgba(7,9,7,0) 100%)}
+  .ou-home-hero .ou-hero-image-label{right:20px!important}
+}
+
+@media(max-width:720px){
+  .ou-home-hero{min-height:620px!important}
+  .ou-home-hero .ou-hero-copy{min-height:620px!important;align-items:flex-end!important}
+  .ou-home-hero .ou-hero-copy-inner{width:calc(100% - 28px)!important;margin:0 14px!important;padding:88px 0 54px!important}
+  .ou-home-hero .ou-hero-image img{object-position:67% 50%!important;transform:scale(1.03)!important}
+  .ou-home-hero .ou-hero-image:before{background:linear-gradient(0deg,rgba(7,9,7,.98) 0%,rgba(7,9,7,.96) 34%,rgba(7,9,7,.76) 58%,rgba(7,9,7,.28) 78%,rgba(7,9,7,.08) 100%)}
+  .ou-home-hero .ou-hero-image:after{background:linear-gradient(180deg,rgba(7,9,7,.24),transparent 32%)}
+  .ou-home-hero h1{font-size:clamp(42px,12vw,56px)!important;max-width:94%!important}
+  .ou-home-hero p{font-size:15px!important;max-width:92%!important}
+  .ou-home-hero .ou-hero-image-label{display:none!important}
+  .ou-home-hero .ou-hero-actions{gap:18px!important;flex-wrap:wrap!important}
+}
