@@ -6,7 +6,6 @@ import "./admin/enhancements.css";
 import "./stage2.css";
 import "./motion-refresh.css";
 import "./ou-rebuild.css";
-import "./hero-blend.css";
 import "./webmedia-rebuild.css";
 import SiteChrome from "@/components/SiteChrome";
 
