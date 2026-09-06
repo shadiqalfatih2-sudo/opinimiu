@@ -7,18 +7,19 @@ import "./stage2.css";
 import "./motion-refresh.css";
 import "./ou-rebuild.css";
 import "./webmedia-rebuild.css";
+import "./ub-theme.css";
 import SiteChrome from "@/components/SiteChrome";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://opinimiu.vercel.app"),
-  title: { default: "Opinimiu Celebest — Opini & Analisis Sulawesi Tengah", template: "%s — Opinimiu" },
-  description: "Kanal opini, analisis, data, dan perspektif muda tentang pembangunan Sulawesi Tengah.",
+  title: { default: "Opinimiu — Opini & Analisis Sulawesi Tengah", template: "%s — Opinimiu" },
+  description: "Kanal opini, analisis, data, dan perspektif tentang pembangunan Sulawesi Tengah.",
   openGraph: {
-    siteName: "Opinimiu Celebest",
+    siteName: "Opinimiu",
     type: "website",
     locale: "id_ID",
-    title: "Opinimiu Celebest — Opini & Analisis Sulawesi Tengah",
-    description: "Opini yang datang dengan data, terasa dekat dengan kita."
+    title: "Opinimiu — Opini & Analisis Sulawesi Tengah",
+    description: "Sulteng perlu dibicarakan dengan data."
   },
   twitter: { card: "summary_large_image" }
 };
