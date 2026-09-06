@@ -1,0 +1,72 @@
+/* Preserve the original Opinimiu artwork exactly: no stretching, cropping, recoloring, or filters. */
+.brand.brand-official.ub-brand{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  width:218px!important;
+  min-width:218px!important;
+  max-width:218px!important;
+  padding:0!important;
+  margin:0!important;
+  background:transparent!important;
+  border:0!important;
+  line-height:0!important;
+  overflow:visible!important;
+}
+
+.brand.brand-official.ub-brand .ub-brand-logo{
+  display:block!important;
+  width:218px!important;
+  max-width:100%!important;
+  height:auto!important;
+  aspect-ratio:520 / 179!important;
+  object-fit:contain!important;
+  object-position:left center!important;
+  transform:none!important;
+  filter:none!important;
+}
+
+.ub-footer .brand.brand-official.ub-brand{
+  width:205px!important;
+  min-width:205px!important;
+  max-width:205px!important;
+  margin-bottom:18px!important;
+}
+
+.ub-footer .brand.brand-official.ub-brand .ub-brand-logo{
+  width:205px!important;
+}
+
+@media (max-width:980px){
+  .brand.brand-official.ub-brand{
+    width:172px!important;
+    min-width:172px!important;
+    max-width:172px!important;
+  }
+  .brand.brand-official.ub-brand .ub-brand-logo{
+    width:172px!important;
+  }
+  .ub-footer .brand.brand-official.ub-brand,
+  .ub-footer .brand.brand-official.ub-brand .ub-brand-logo{
+    width:182px!important;
+    min-width:0!important;
+    max-width:182px!important;
+  }
+}
+
+@media (max-width:560px){
+  .brand.brand-official.ub-brand{
+    width:154px!important;
+    min-width:154px!important;
+    max-width:154px!important;
+  }
+  .brand.brand-official.ub-brand .ub-brand-logo{
+    width:154px!important;
+  }
+  .ub-footer .brand.brand-official.ub-brand,
+  .ub-footer .brand.brand-official.ub-brand .ub-brand-logo{
+    width:166px!important;
+    min-width:0!important;
+    max-width:166px!important;
+  }
+}
