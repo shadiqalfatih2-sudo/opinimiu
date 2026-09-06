@@ -25,8 +25,18 @@ export default function Newsletter() {
     setMessage("Sip. Kamu sudah masuk daftar Opinimiu.");
   }
 
-  return <section className="newsletter shell">
-    <div><span className="eyebrow light">Newsletter</span><h2>Yang penting dari Sulteng, tanpa kebisingan.</h2></div>
-    <div><form className="newsletter-form" onSubmit={subscribe}><input type="email" required placeholder="email@kamu.id" aria-label="Email" value={email} onChange={(e) => setEmail(e.target.value)} /><button type="submit" disabled={busy}>{busy ? "Menyimpan..." : "Ikuti Opinimiu →"}</button></form>{message && <small className="newsletter-message">{message}</small>}</div>
-  </section>;
+  return (
+    <section className="ub-newsletter-wrap">
+      <div className="shell ub-newsletter">
+        <div className="ub-newsletter-copy"><span className="ub-mail-icon">✉</span><div><strong>Dapatkan update terbaru dari Opinimiu</strong><p>Artikel pilihan, analisis, dan data terbaru langsung ke email Anda.</p></div></div>
+        <div className="ub-newsletter-form-wrap">
+          <form className="ub-newsletter-form" onSubmit={subscribe}>
+            <input type="email" required placeholder="Masukkan alamat email Anda" aria-label="Email" value={email} onChange={(event) => setEmail(event.target.value)} />
+            <button type="submit" disabled={busy}>{busy ? "Menyimpan..." : "Berlangganan"}</button>
+          </form>
+          {message && <small className="newsletter-message">{message}</small>}
+        </div>
+      </div>
+    </section>
+  );
 }
