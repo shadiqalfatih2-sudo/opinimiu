@@ -4,10 +4,11 @@ export default function Brand() {
   return (
     <Link className="brand brand-official portal-brand" href="/" aria-label="Opinimiu - Beranda">
       <img
-        src="/opinimiu-logo-transparent.png"
+        src="/opinimiu-logo-dark.png"
         alt="Opinimiu Celebest"
         width={520}
         height={179}
+        decoding="async"
       />
     </Link>
   );
