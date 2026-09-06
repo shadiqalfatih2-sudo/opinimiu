@@ -2,33 +2,24 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getPublishedArticle } from "@/lib/articles";
+import ResilientImage from "@/components/ResilientImage";
 
 type Params = { params: Promise<{ slug: string }> };
 const baseUrl = "https://opinimiu.vercel.app";
+const fallbackCover = `${baseUrl}/assets/sulteng/hero`;
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
   const article = await getPublishedArticle(slug);
   if (!article) return { title: "Artikel tidak ditemukan" };
   const canonical = `${baseUrl}/opini/${slug}`;
+  const cover = article.coverUrl || fallbackCover;
   return {
     title: article.seoTitle || article.title,
     description: article.seoDescription || article.excerpt,
     alternates: { canonical },
-    openGraph: {
-      title: article.seoTitle || article.title,
-      description: article.seoDescription || article.excerpt,
-      type: "article",
-      url: canonical,
-      publishedTime: article.publishedAtIso ?? undefined,
-      images: article.coverUrl ? [{ url: article.coverUrl }] : undefined
-    },
-    twitter: {
-      card: article.coverUrl ? "summary_large_image" : "summary",
-      title: article.seoTitle || article.title,
-      description: article.seoDescription || article.excerpt,
-      images: article.coverUrl ? [article.coverUrl] : undefined
-    }
+    openGraph: { title: article.seoTitle || article.title, description: article.seoDescription || article.excerpt, type: "article", url: canonical, publishedTime: article.publishedAtIso ?? undefined, images: [{ url: cover }] },
+    twitter: { card: "summary_large_image", title: article.seoTitle || article.title, description: article.seoDescription || article.excerpt, images: [cover] }
   };
 }
 
@@ -47,7 +38,7 @@ export default async function ArticlePage({ params }: Params) {
         <p className="dek">{article.excerpt}</p>
         <div className="article-byline"><span className="avatar">O</span><div><strong>{article.author}</strong><small>{article.publishedAt}</small></div></div>
       </div>
-      {article.coverUrl && <figure className="article-cover"><img src={article.coverUrl} alt={`Cover ${article.title}`} /></figure>}
+      <figure className="article-cover"><ResilientImage sources={[article.coverUrl, "/assets/sulteng/hero", "/opinimiu-hero.webp"]} alt={`Cover ${article.title}`} loading="eager" /></figure>
       <div className="article-layout">
         <aside><span>Bagikan</span><a href={`https://wa.me/?text=${whatsappText}`} target="_blank" rel="noreferrer">WhatsApp ↗</a><Link href="/opini">← Semua opini</Link></aside>
         <div className="article-body">
