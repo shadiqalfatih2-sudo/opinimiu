@@ -1,14 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import "./article.css";
+import "./ub-theme.css";
 import "./admin/admin.css";
 import "./admin/enhancements.css";
-import "./stage2.css";
-import "./motion-refresh.css";
-import "./ou-rebuild.css";
-import "./webmedia-rebuild.css";
-import "./ub-theme.css";
-import "./logo-fix.css";
 import SiteChrome from "@/components/SiteChrome";
 
 export const metadata: Metadata = {
