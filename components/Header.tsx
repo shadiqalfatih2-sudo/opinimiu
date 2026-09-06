@@ -3,37 +3,11 @@ import Brand from "./Brand";
 
 export default function Header() {
   return (
-    <header className="site-header ou-header">
-      <div className="ou-utility-bar">
-        <div className="shell ou-utility-inner">
-          <div className="ou-utility-label">Opini • Analisis • Data Sulawesi Tengah</div>
-          <div className="ou-utility-links">
-            <Link href="/tentang">Tentang</Link>
-            <Link href="/feed.xml">RSS</Link>
-            <Link href="/admin/login">Editorial</Link>
-          </div>
-        </div>
-      </div>
-
-      <div className="ou-brand-row shell">
-        <Brand />
-        <div className="ou-brand-actions">
-          <Link href="/cari" className="ou-search-link" aria-label="Cari tulisan">Cari tulisan <span>⌕</span></Link>
-          <Link href="/opini" className="ou-highlight-link">Jelajahi tulisan <span>→</span></Link>
-        </div>
-      </div>
-
-      <div className="ou-nav-row">
-        <div className="shell ou-nav-inner">
-          <nav className="desktop-nav ou-primary-nav" aria-label="Navigasi utama">
-            <Link href="/isu">Isu</Link>
-            <Link href="/opini">Opini</Link>
-            <Link href="/program">Program</Link>
-            <Link href="/data">Data</Link>
-            <Link href="/tentang">Tentang Opinimiu</Link>
-          </nav>
-          <Link href="/cari" className="ou-nav-search">Cari <span>⌕</span></Link>
-        </div>
+    <header className="site-header ub-header">
+      <div className="ub-topbar"><div className="shell ub-topbar-inner"><span>OPINIMIU | SUARA JERNIH UNTUK SULAWESI TENGAH</span><div><span className="ub-language">BAHASA: 🇮🇩</span><Link href="/admin/login">EDITORIAL</Link></div></div></div>
+      <div className="ub-mainnav">
+        <div className="shell ub-mainnav-inner"><Brand /><nav className="ub-desktop-nav" aria-label="Navigasi utama"><Link href="/opini">OPINI</Link><Link href="/isu">ISU <span>⌄</span></Link><Link href="/program">PROGRAM <span>⌄</span></Link><Link href="/data">DATA <span>⌄</span></Link><Link href="/tentang">TENTANG <span>⌄</span></Link></nav><Link href="/cari" className="ub-header-search" aria-label="Cari">⌕</Link></div>
+        <nav className="shell ub-mobile-nav" aria-label="Navigasi mobile"><Link href="/opini">Opini</Link><Link href="/isu">Isu</Link><Link href="/program">Program</Link><Link href="/data">Data</Link><Link href="/tentang">Tentang</Link><Link href="/cari">Cari</Link></nav>
       </div>
     </header>
   );
